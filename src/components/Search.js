@@ -6,26 +6,40 @@ class Search extends Component {
   constructor() {
     super();
     this.state ={
-      currentLease: {},
+      leaseId: ""
     }
+    this._handleInput = this._handleInput.bind(this);
+    this._handleSubmit = this._handleSubmit.bind(this);
   }
-
-  fetchLease(id) {
+// update state based on input lease id
+  _handleInput(event) {
+    this.setState({leaseId: event.target.value});
+  }
+// request update when the form is submitted/ search button pressed
+  _handleSubmit(event) {
+    event.preventDefault();
+    this.fetchLease();
+  }
+// function for retrieving lease info based on id
+  fetchLease() {
     const leaseURL = "https://hiring-task-api.herokuapp.com/v1/leases/";
-    let leaseId = id;
-    axios.get(leaseURL + leaseId).then( (results) => {
+
+    axios.get(leaseURL + this.state.leaseId).then( (results) => {
       console.log(results);
-    })
+      this.props.updateLease({currentLease: results.data})
+    }).catch( error => console.log(error) );
+
+
   }
 
-  
+
 
 
   render() {
     return (
-      <div class="search">
-        <form class="" >
-          <input type="number" name="" value="" placeholder="enter lease id"></input>
+      <div className="search">
+        <form className="" onSubmit={this._handleSubmit}>
+          <input type="number" name="" value={this.state.leaseId} placeholder="enter lease id here" onChange={this._handleInput}></input>
           <button type="submit" name="button">Search</button>
         </form>
       </div>
