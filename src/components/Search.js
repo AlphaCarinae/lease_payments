@@ -29,10 +29,7 @@ class Search extends Component {
       this.props.updateLease({currentLease: results.data})
     }).catch( error => console.log(error) );
 
-
   }
-
-
 
 
   render() {
