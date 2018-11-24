@@ -25,7 +25,6 @@ class Search extends Component {
     const leaseURL = "https://hiring-task-api.herokuapp.com/v1/leases/";
 
     axios.get(leaseURL + this.state.leaseId).then( (results) => {
-      console.log(results);
       this.props.updateLease({currentLease: results.data})
     }).catch( error => console.log(error) );
 

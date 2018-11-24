@@ -1,17 +1,17 @@
 // This file holds the functions we need for date calculations
 //in Results component and their needed constants
 
-const week = [
-  "Sunday",
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday"
+export const week = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday"
 ]
 
-const months = [
+export const months = [
   "January",
   "February",
   "March",
@@ -28,7 +28,7 @@ const months = [
 //------------------------------------------------------------------------------------------
 //function to generate sequential numbers
 
-const sequential = function(num) {
+export const sequential = function(num) {
   if (isNaN(num)) {
     return "entry must be a number"
   }else if (num > 3 && num < 21) {
@@ -44,7 +44,7 @@ const sequential = function(num) {
 //------------------------------------------------------------------------------------------
 //function to accept a YYYY-MM-DD formatted date argument as a string and return day of the week
 
-const dateToDayOfWeek = function(date) {
+export const dateToDayOfWeek = function(date) {
   let day = new Date(date);
   let dayOfWeek = day.getDay(day);
   return week[dayOfWeek];
@@ -52,19 +52,18 @@ const dateToDayOfWeek = function(date) {
 //------------------------------------------------------------------------------------------
 //function to accept two YYYY-MM-DD formatted date arguments and return the number of days in between
 
-const dateDiff = function(date1, date2) {
-  let day1 = new Date(date1 + " 00:00");
-  let day2 = new Date(date2 + " 00:00");
+export const dateDiff = function(date1, date2) {
+  let day1 = new Date(date1 + " 00:00 GMT");
+  let day2 = new Date(date2 + " 00:00 GMT");
   let diff = (day2 - day1)/86400000;
-  console.log(diff, day1, day2);
   // the difference is in milliseconds, and hence divided by number of millisecnds in a day
   return diff;
 }
 //------------------------------------------------------------------------------------------
 //function to accept a YYYY-MM-DD formatted date argument and number of days and return the date
 
-const dateAdd = function(date1, days) {
-  let day1 = new Date(date1);
+export const dateAdd = function(date1, days) {
+  let day1 = new Date(date1 + " 00:00 GMT");
   let daysInMiliSecs = days * 24 * 60 * 60 * 1000;
 
   day1.setTime(day1.getTime() + daysInMiliSecs);
@@ -74,7 +73,7 @@ const dateAdd = function(date1, days) {
 //------------------------------------------------------------------------------------------
 //function to convert date format from the one in databse to the human readable in output
 
-const dateToHuman = function(date) {
+export const dateToHuman = function(date) {
   let dateForDb = new Date(date);
   //create this format; August, 28th 2018
   let result = months[dateForDb.getMonth()] + ', ' + sequential(dateForDb.getDate()) + ' ' +  dateForDb.getFullYear();
@@ -84,24 +83,23 @@ const dateToHuman = function(date) {
 //------------------------------------------------------------------------------------------
 //function to create one entry/instance of payment based on first date, last date and daily rate
 //in this format August, 28th 2018 ║ September, 10th 2018 ║ 14 ║ $1020
-const rentEntry = function(date1, date2, dayRate) {
-  console.log(date1, date2,dayRate);
+export const rentEntry = function(date1, date2, dayRate) {
   let result = [];
   result.push(dateToHuman(date1));
   result.push(dateToHuman(date2));
-  let daysInRentPeriod = Math.floor(dateDiff(date1,date2))
+  let daysInRentPeriod = dateDiff(date1,date2)
   result.push(daysInRentPeriod.toString());
   let rentValue = '$' + (dayRate * daysInRentPeriod).toFixed(2)
   result.push(rentValue)
-  console.log(result);
   return result;
 }
 //------------------------------------------------------------------------------------------
 // function to populate and output date brackets between lease start, respective of payment day and frequency
 
-const populateRentDates = function(startDate, endDate, weekDay, frequency, rent) {
+export const populateRentDates = function(startDate, endDate, weekDay, frequency, rent) {
   let dayOfWeekStart = dateToDayOfWeek(startDate);
   let dayOfWeekEnd = dateToDayOfWeek(endDate);
+  // weekDay = weekDay.toLowerCase();
   let dayRate, periodLength
 
   switch (frequency) {
@@ -153,10 +151,9 @@ const populateRentDates = function(startDate, endDate, weekDay, frequency, rent)
   }
   //pushing the last period into date ranges
   dateRanges.push([payDate, endDate])
-
   //now iterating through date ranges to generate the final populated table
   dateRanges.map( (range) => {
-    populatedTable.push(rentEntry(range[0], range[1], dayRate))
+    return populatedTable.push(rentEntry(range[0], range[1], dayRate))
 
   })
 
