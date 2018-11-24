@@ -53,9 +53,10 @@ const dateToDayOfWeek = function(date) {
 //function to accept two YYYY-MM-DD formatted date arguments and return the number of days in between
 
 const dateDiff = function(date1, date2) {
-  let day1 = new Date(date1);
-  let day2 = new Date(date2);
+  let day1 = new Date(date1 + " 00:00");
+  let day2 = new Date(date2 + " 00:00");
   let diff = (day2 - day1)/86400000;
+  console.log(diff, day1, day2);
   // the difference is in milliseconds, and hence divided by number of millisecnds in a day
   return diff;
 }
@@ -67,7 +68,6 @@ const dateAdd = function(date1, days) {
   let daysInMiliSecs = days * 24 * 60 * 60 * 1000;
 
   day1.setTime(day1.getTime() + daysInMiliSecs);
-  console.log(day1);
 //Months are numbered 0-11, hence the adjustments below
   return `${day1.getFullYear()}-${day1.getMonth() + 1 }-${day1.getDate()}`;
 }
@@ -85,13 +85,15 @@ const dateToHuman = function(date) {
 //function to create one entry/instance of payment based on first date, last date and daily rate
 //in this format August, 28th 2018 ║ September, 10th 2018 ║ 14 ║ $1020
 const rentEntry = function(date1, date2, dayRate) {
+  console.log(date1, date2,dayRate);
   let result = [];
   result.push(dateToHuman(date1));
   result.push(dateToHuman(date2));
-  let daysInRentPeriod = dateDiff(date1,date2)
-  result.push(daysInRentPeriod);
-  result.push('$' + dayRate * daysInRentPeriod)
-
+  let daysInRentPeriod = Math.floor(dateDiff(date1,date2))
+  result.push(daysInRentPeriod.toString());
+  let rentValue = '$' + (dayRate * daysInRentPeriod).toFixed(2)
+  result.push(rentValue)
+  console.log(result);
   return result;
 }
 //------------------------------------------------------------------------------------------
@@ -100,15 +102,21 @@ const rentEntry = function(date1, date2, dayRate) {
 const populateRentDates = function(startDate, endDate, weekDay, frequency, rent) {
   let dayOfWeekStart = dateToDayOfWeek(startDate);
   let dayOfWeekEnd = dateToDayOfWeek(endDate);
-  let dayRate = switch (frequency) {
+  let dayRate, periodLength
+
+  switch (frequency) {
     case 'weekly':
-      rent/7
+      dayRate = rent / 7
+      periodLength = 7
       break;
     case 'fortnightly':
-      rent/14
+      dayRate = rent / 14
+      periodLength = 14
       break;
-    case 'monthly'
-      rent/28
+    case 'monthly':
+      dayRate = rent / 28
+      periodLength = 28
+      break;
     default:
 
   }
@@ -116,15 +124,42 @@ const populateRentDates = function(startDate, endDate, weekDay, frequency, rent)
 
 //the final result is an array of arrays, where child arrays are lines in the final result table
   let populatedTable = [];
+  //this holds the arrays of date ranges for rent only
+  let dateRanges=[];
 
   let startDifference = week.indexOf(dayOfWeekStart) - week.indexOf(weekDay);
   let endDifference =  week.indexOf(dayOfWeekEnd) - week.indexOf(weekDay);
-//pushing the days before the paying weekday
+//making sure the first payment part is calculated correctly based on day of week difference
   if (startDifference < 0) {
-    populatedTable.push(rentEntry(startDate, dateAdd(startDate,startDifference)))
-  } else if (week.indexOf(dayOfWeekStart) > week.indexOf(weekDay)) {
-
-  } else {
-
+    startDifference = -startDifference;
+  } else if (startDifference > 0) {
+    startDifference = 7 - startDifference;
   }
+//pushing the first period into date ranges
+  let payDate = dateAdd(startDate, startDifference)
+  dateRanges.push([startDate, payDate])
+//pushing the middle periods into date ranges, until end of period goes beyond contract end date
+  while (dateDiff(dateAdd(payDate, periodLength), endDate) > 0) {
+    let pastPayDate = payDate;
+    payDate = dateAdd(payDate, periodLength)
+    dateRanges.push([pastPayDate,payDate])
+  }
+  //making sure the first payment part is calculated correctly based on day of week difference
+
+  if (endDifference < 0) {
+    endDifference = 7 - endDifference;
+  } else if (endDifference > 0) {
+    endDifference = -endDifference;
+  }
+  //pushing the last period into date ranges
+  dateRanges.push([payDate, endDate])
+
+  //now iterating through date ranges to generate the final populated table
+  dateRanges.map( (range) => {
+    populatedTable.push(rentEntry(range[0], range[1], dayRate))
+
+  })
+
+
+  return populatedTable
 }
