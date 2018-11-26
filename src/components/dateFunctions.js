@@ -86,10 +86,11 @@ export const dateToHuman = function(date) {
 export const rentEntry = function(date1, date2, dayRate) {
   let result = [];
   result.push(dateToHuman(date1));
-  result.push(dateToHuman(date2));
+  //show the last day of period
+  result.push(dateToHuman(dateAdd(date2,-1)));
   let daysInRentPeriod = dateDiff(date1,date2)
   result.push(daysInRentPeriod.toString());
-  let rentValue = '$' + (dayRate * daysInRentPeriod).toFixed(2)
+  let rentValue = '$' + (dayRate * daysInRentPeriod).toFixed(1)
   result.push(rentValue)
   return result;
 }
@@ -150,7 +151,9 @@ export const populateRentDates = function(startDate, endDate, weekDay, frequency
     endDifference = -endDifference;
   }
   //pushing the last period into date ranges
-  dateRanges.push([payDate, endDate])
+  //in contrast to the other date ranges, the last day of the contract seems to be inclusive
+  //as per the provided table, hence adding it to the final range
+  dateRanges.push([payDate, dateAdd(endDate, 1)])
   //now iterating through date ranges to generate the final populated table
   dateRanges.map( (range) => {
     return populatedTable.push(rentEntry(range[0], range[1], dayRate))

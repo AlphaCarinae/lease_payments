@@ -12,22 +12,37 @@ class Results extends Component {
     if (currentLease.start_date) {
       leaseResults =
       <div>
-        <p>Current Lease info </p>
-        <p></p>
-        <p>id: {currentLease.id}</p>
-        <p>start_date: {currentLease.start_date}</p>
-        <p>end_date: {currentLease.end_date}</p>
-        <p>payment_day: {currentLease.payment_day}</p>
-        <p>rent: {currentLease.rent}</p>
-        <p>frequency: {currentLease.frequency}</p>
 
-        <table>
+        <table className="leaseInfo">
+          <thead className="leaseInfoHead">
+            <tr>
+              <td>Lease id</td>
+              <td>Start date</td>
+              <td>End date</td>
+              <td>Payment day</td>
+              <td>Rent</td>
+              <td>Rent frequency</td>
+            </tr>
+          </thead>
+          <tbody className="leaseInfoBody">
+            <tr>
+              <td>{currentLease.id}</td>
+              <td>{currentLease.start_date}</td>
+              <td>{currentLease.end_date}</td>
+              <td>{currentLease.payment_day}</td>
+              <td>{currentLease.rent}</td>
+              <td>{currentLease.frequency}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table className="resultTable">
           <thead>
             <tr>
-              <td>From</td>
-              <td>To</td>
-              <td>days</td>
-              <td>amount</td>
+              <th>From</th>
+              <th>To</th>
+              <th>days</th>
+              <th>amount</th>
             </tr>
           </thead>
           <tbody>
@@ -42,7 +57,7 @@ class Results extends Component {
               )
             })}
           </tbody>
-        </table>;
+        </table>
       </div>
     }
       return (

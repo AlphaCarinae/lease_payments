@@ -26,7 +26,7 @@ class Search extends Component {
 
     axios.get(leaseURL + this.state.leaseId).then( (results) => {
       this.props.updateLease({currentLease: results.data})
-    }).catch( error => console.log(error) );
+    }).catch( (error) => console.log(error) );
 
   }
 
@@ -34,7 +34,10 @@ class Search extends Component {
   render() {
     return (
       <div className="search">
-        <form className="" onSubmit={this._handleSubmit}>
+      <img className="logo" src="logo.svg" alt="Different Logo" />
+
+        <form className="searchForm" onSubmit={this._handleSubmit}>
+          <label>Find payment details of a specific lease id </label>
           <input type="number" name="" value={this.state.leaseId} placeholder="enter lease id here" onChange={this._handleInput}></input>
           <button type="submit" name="button">Search</button>
         </form>
