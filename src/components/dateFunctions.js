@@ -100,7 +100,6 @@ export const rentEntry = function(date1, date2, dayRate) {
 
 export const populateRentDates = function(startDate, endDate, weekDay, frequency, rent) {
   let dayOfWeekStart = dateToDayOfWeek(startDate);
-  let dayOfWeekEnd = dateToDayOfWeek(endDate);
   // weekDay = weekDay.toLowerCase();
   let dayRate, periodLength
 
@@ -128,7 +127,6 @@ export const populateRentDates = function(startDate, endDate, weekDay, frequency
   let dateRanges=[];
 
   let startDifference = week.indexOf(dayOfWeekStart) - week.indexOf(weekDay);
-  let endDifference =  week.indexOf(dayOfWeekEnd) - week.indexOf(weekDay);
 //making sure the first payment part is calculated correctly based on day of week difference
   if (startDifference < 0) {
     startDifference = -startDifference;
