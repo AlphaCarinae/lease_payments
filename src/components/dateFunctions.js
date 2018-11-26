@@ -26,7 +26,7 @@ export const months = [
   "December"
 ]
 //------------------------------------------------------------------------------------------
-//function to generate sequential numbers
+//function to generate sequential numbers, like 1st, 2nd, 24th
 
 export const sequential = function(num) {
   if (isNaN(num)) {
@@ -67,7 +67,7 @@ export const dateAdd = function(date1, days) {
   let daysInMiliSecs = days * 24 * 60 * 60 * 1000;
 
   day1.setTime(day1.getTime() + daysInMiliSecs);
-//Months are numbered 0-11, hence the adjustments below
+//Months are numbered 0-11, hence the adjustments below, also returning in YYYY-MM-DD format string
   return `${day1.getFullYear()}-${day1.getMonth() + 1 }-${day1.getDate()}`;
 }
 //------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ export const dateAdd = function(date1, days) {
 
 export const dateToHuman = function(date) {
   let dateForDb = new Date(date);
-  //create this format; August, 28th 2018
+  //create this format; August, 28th 2018 as a string in output
   let result = months[dateForDb.getMonth()] + ', ' + sequential(dateForDb.getDate()) + ' ' +  dateForDb.getFullYear();
 
   return result;
@@ -92,6 +92,7 @@ export const rentEntry = function(date1, date2, dayRate) {
   result.push(daysInRentPeriod.toString());
   let rentValue = '$' + (dayRate * daysInRentPeriod).toFixed(1)
   result.push(rentValue)
+  //the output is an array formatted like ["August, 28th 2018" , "September, 10th 2018 ", "14" , "$1020"]
   return result;
 }
 //------------------------------------------------------------------------------------------
@@ -138,18 +139,12 @@ export const populateRentDates = function(startDate, endDate, weekDay, frequency
   let payDate = dateAdd(startDate, startDifference)
   dateRanges.push([startDate, payDate])
 //pushing the middle periods into date ranges, until end of period goes beyond contract end date
-  while (dateDiff(dateAdd(payDate, periodLength), endDate) > 0) {
+  while (dateDiff(dateAdd(payDate, periodLength), endDate) >= 0) {
     let pastPayDate = payDate;
     payDate = dateAdd(payDate, periodLength)
-    dateRanges.push([pastPayDate,payDate])
+    dateRanges.push([pastPayDate, payDate])
   }
-  //making sure the first payment part is calculated correctly based on day of week difference
 
-  if (endDifference < 0) {
-    endDifference = 7 - endDifference;
-  } else if (endDifference > 0) {
-    endDifference = -endDifference;
-  }
   //pushing the last period into date ranges
   //in contrast to the other date ranges, the last day of the contract seems to be inclusive
   //as per the provided table, hence adding it to the final range

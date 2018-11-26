@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { week, months, sequential, dateToDayOfWeek, dateDiff, dateAdd, dateToHuman, rentEntry, populateRentDates } from '../components/dateFunctions.js'
+import { populateRentDates } from '../components/dateFunctions.js'
 
 
 class Results extends Component {
@@ -8,7 +8,6 @@ class Results extends Component {
     const { start_date, end_date, rent, frequency, payment_day } = this.props.currentLease;
     const currentLease = this.props.currentLease ;
     let leaseResults;
-    console.log(currentLease);
     if (currentLease.start_date) {
       leaseResults =
       <div>
@@ -41,8 +40,8 @@ class Results extends Component {
             <tr>
               <th>From</th>
               <th>To</th>
-              <th>days</th>
-              <th>amount</th>
+              <th>Days</th>
+              <th>Amount</th>
             </tr>
           </thead>
           <tbody>

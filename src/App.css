@@ -60,7 +60,7 @@
 }
 
 .resultTable {
-  margin: auto;
+  margin: 20px auto;
   border-collapse: collapse;
   max-width: 90%;
 }
